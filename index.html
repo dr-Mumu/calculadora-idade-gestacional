@@ -155,7 +155,10 @@
                     return;
                 }
 
-                const dataUltrassom = new Date(dataUltrassomString + 'T00:00:00');
+                
+                const partes = dataUltrassomString.split('-');
+                const dataUltrassom = new Date(partes[0], partes[1] - 1, partes[2]);
+    
                 if (isNaN(dataUltrassom)) {
                     alert('Data do ultrassom inválida.');
                     return;
