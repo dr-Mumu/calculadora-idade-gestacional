@@ -2,7 +2,7 @@
 {
   "name": "Calculadora de Idade Gestacional",
   "short_name": "GestCalc",
-  "start_url": "./index.html",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#007bff",
