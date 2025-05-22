@@ -201,7 +201,26 @@
             }
             document.getElementById('dpp').textContent = `Data Provável do Parto (DPP): ${dpp.toLocaleDateString('pt-BR')}.`;
     
+            
+            let trimestre = '';
+            if (semanasAtuais < 14) {
+                trimestre = '1º trimestre';
+            } else if (semanasAtuais < 28) {
+                trimestre = '2º trimestre';
+            } else {
+                trimestre = '3º trimestre';
+            }
+
+            const mesGestacional = Math.ceil(idadeGestacionalEmDias / 30);
+
+            const resultadoExtra = `
+                <p>Trimestre atual: ${trimestre}</p>
+                <p>Mês de gestação: ${mesGestacional}º mês</p>
+            `;
+
+            document.getElementById('resultado').innerHTML += resultadoExtra;
             document.getElementById('resultado').style.display = 'block';
+    
         }
 
         
