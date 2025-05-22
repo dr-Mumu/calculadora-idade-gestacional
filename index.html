@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Idade Gestacional</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        .logo {
+            width: 150px;
+            margin: 0 auto 20px;
+        }
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            text-align: left;
+        }
+        input[type="date"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .resultado {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="logo-mumu.png" alt="Logo Mumu" class="logo">
+        <h1>Calculadora de Idade Gestacional</h1>
+
+        <label for="metodoCalculo">Escolha o método de cálculo:</label>
+        <select id="metodoCalculo" onchange="mostrarCampos()">
+            <option value="dum">Data da Última Menstruação (DUM)</option>
+            <option value="ultrassom">Ultrassom Gestacional</option>
+        </select>
+
+        <div id="camposDUM">
+            <label for="dum">Data da Última Menstruação (DUM):</label>
+            <input type="date" id="dum">
+        </div>
+
+        <div id="camposUltrassom" style="display: none;">
+            <label for="dataUltrassom">Data do Ultrassom:</label>
+            <input type="date" id="dataUltrassom">
+
+            <label>Idade Gestacional no Ultrassom:</label>
+            <input type="number" id="semanasUltrassom" placeholder="Semanas">
+            <input type="number" id="diasUltrassom" placeholder="Dias">
+        </div>
+
+        <button onclick="calcularIdadeGestacional()">Calcular</button>
+
+        <div class="resultado" id="resultado" style="display: none;">
+            <p id="idadeGestacionalAtual"></p>
+            <p id="dpp"></p>
+        </div>
+    </div>
+
+    <script>
+        function mostrarCampos() {
+            const metodo = document.getElementById('metodoCalculo').value;
+            document.getElementById('camposDUM').style.display = metodo === 'dum' ? 'block' : 'none';
+            document.getElementById('camposUltrassom').style.display = metodo === 'ultrassom' ? 'block' : 'none';
+        }
+
+        function calcularIdadeGestacional() {
+            const metodo = document.getElementById('metodoCalculo').value;
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+
+            let dataBase, dpp, idadeGestacionalEmDias;
+
+            if (metodo === 'dum') {
+                const dumString = document.getElementById('dum').value;
+                if (!dumString) {
+                    alert('Por favor, insira a Data da Última Menstruação.');
+                    return;
+                }
+                dataBase = new Date(dumString + 'T00:00:00');
+                if (isNaN(dataBase)) {
+                    alert('Data da Última Menstruação inválida.');
+                    return;
+                }
+                dpp = new Date(dataBase);
+                dpp.setDate(dpp.getDate() + 280);
+                idadeGestacionalEmDias = Math.floor((hoje - dataBase) / (1000 * 60 * 60 * 24));
+            } else {
+                const dataUltrassomString = document.getElementById('dataUltrassom').value;
+                const semanasUltrassom = parseInt(document.getElementById('semanasUltrassom').value);
+                const diasUltrassom = parseInt(document.getElementById('diasUltrassom').value);
+
+                if (!dataUltrassomString || isNaN(semanasUltrassom) || isNaN(diasUltrassom)) {
+                    alert('Por favor, preencha todos os campos do ultrassom.');
+                    return;
+                }
+
+                const dataUltrassom = new Date(dataUltrassomString + 'T00:00:00');
+                if (isNaN(dataUltrassom)) {
+                    alert('Data do ultrassom inválida.');
+                    return;
+                }
+
+                const idadeGestacionalUltrassomEmDias = (semanasUltrassom * 7) + diasUltrassom;
+                dataBase = new Date(dataUltrassom);
+                dataBase.setDate(dataBase.getDate() - idadeGestacionalUltrassomEmDias);
+                dpp = new Date(dataBase);
+                dpp.setDate(dpp.getDate() + 280);
+                idadeGestacionalEmDias = Math.floor((hoje - dataBase) / (1000 * 60 * 60 * 24));
+            }
+
+            if (idadeGestacionalEmDias < 0) {
+                alert('A data base não pode ser uma data futura.');
+                document.getElementById('resultado').style.display = 'none';
+                return;
+            }
+
+            const semanasAtuais = Math.floor(idadeGestacionalEmDias / 7);
+            const diasAtuais = idadeGestacionalEmDias % 7;
+
+            document.getElementById('idadeGestacionalAtual').textContent = `Idade Gestacional Atual: ${semanasAtuais} semanas e ${diasAtuais} dias.`;
+            document.getElementById('dpp').textContent = `Data Provável do Parto (DPP): ${dpp.toLocaleDateString('pt-BR')}.`;
+            document.getElementById('resultado').style.display = 'block';
+        }
+
+        window.onload = mostrarCampos;
+    </script>
+</body>
+</html>
