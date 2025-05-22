@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Idade Gestacional</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#007bff">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -93,7 +95,6 @@
         <div id="camposUltrassom" style="display: none;">
             <label for="dataUltrassom">Data do Ultrassom:</label>
             <input type="date" id="dataUltrassom">
-
             <label>Idade Gestacional no Ultrassom:</label>
             <input type="number" id="semanasUltrassom" placeholder="Semanas">
             <input type="number" id="diasUltrassom" placeholder="Dias">
@@ -137,11 +138,11 @@
                 idadeGestacionalEmDias = Math.floor((hoje - dataBase) / (1000 * 60 * 60 * 24));
             } else {
                 const dataUltrassomString = document.getElementById('dataUltrassom').value;
-                const semanasUltrassom = parseInt(document.getElementById('semanasUltrassom').value);
-                const diasUltrassom = parseInt(document.getElementById('diasUltrassom').value);
+                const semanasUltrassom = parseInt(document.getElementById('semanasUltrassom').value) || 0;
+                const diasUltrassom = parseInt(document.getElementById('diasUltrassom').value) || 0;
 
-                if (!dataUltrassomString || isNaN(semanasUltrassom) || isNaN(diasUltrassom)) {
-                    alert('Por favor, preencha todos os campos do ultrassom.');
+                if (!dataUltrassomString) {
+                    alert('Por favor, insira a data do ultrassom.');
                     return;
                 }
 
@@ -174,6 +175,13 @@
         }
 
         window.onload = mostrarCampos;
+    </script>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(() => console.log('Service Worker registrado'));
+      }
     </script>
 </body>
 </html>
